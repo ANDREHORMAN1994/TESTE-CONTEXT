@@ -1,23 +1,26 @@
-import logo from './logo.svg';
+import React, { useContext, useEffect } from 'react';
+import Context from './context.js/myContext';
 import './App.css';
 
 function App() {
+  const { meals, setMeals } = useContext(Context);
+
+  useEffect(() => {
+    fetch('https://www.themealdb.com/api/json/v1/1/search.php?s=')
+      .then((response) => response.json())
+      .then((data) => setMeals(data.meals))
+  }, [setMeals])
+
+  if (!meals.length) return <h1>LOADING</h1>;
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='App'>
+      {meals.map(meal => (
+        <div key={meal.idMeal}>
+          <h2>{meal.strMeal}</h2>
+          <img src={meal.strMealThumb} alt={meal.strMeal} width='200' />
+        </div>
+      ))}
     </div>
   );
 }
